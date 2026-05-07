@@ -8,7 +8,6 @@ import AdminDashboard from './components/AdminDashboard/AdminDashboard';
 import AuctionList from './components/AuctionList/AuctionList';
 import SellerDashboard from './components/SellerDashboard/SellerDashboard';
 import BuyerDashboard from './components/BuyerDashboard/BuyerDashboard';
-import Features from './components/Features/Features';
 
 function App() {
   const [session, setSession] = useState(null);
@@ -113,10 +112,6 @@ function App() {
                 onClose={() => setShowPublishForm(false)} 
                 onSuccess={() => alert('¡Subasta enviada a revisión con éxito!')}
               />
-            )}
-            
-            {!showAdminPanel && !showSellerPanel && !showBuyerPanel && (
-              <Features />
             )}
             
             {!showAdminPanel && !showSellerPanel && !showBuyerPanel && (
