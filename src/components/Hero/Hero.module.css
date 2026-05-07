@@ -1,0 +1,109 @@
+.hero {
+  position: relative;
+  padding: var(--spacing-xl) 0;
+  overflow: hidden;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+}
+
+.hero__container {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.hero__title {
+  font-size: var(--font-size-h1);
+  font-weight: 900;
+  max-width: 800px;
+  line-height: 1.1;
+}
+
+.hero__highlight {
+  color: var(--color-accent-gold);
+  background: linear-gradient(to bottom, #f1c40f, #d4af37);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero__subtitle {
+  font-size: var(--font-size-h3);
+  color: var(--color-text-secondary);
+  max-width: 600px;
+}
+
+.hero__actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+}
+
+.hero__button_primary {
+  background-color: var(--color-accent-gold);
+  color: var(--color-bg-primary);
+  padding: 1rem 2rem;
+  border-radius: var(--border-radius);
+  font-weight: 700;
+  font-size: 1.1rem;
+  transition: var(--transition-smooth);
+}
+
+.hero__button_primary:hover {
+  background-color: var(--color-accent-gold-hover);
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(212, 175, 55, 0.4);
+}
+
+.hero__button_secondary {
+  background: transparent;
+  color: var(--color-text-primary);
+  padding: 1rem 2rem;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--color-border);
+  font-weight: 700;
+  font-size: 1.1rem;
+  transition: var(--transition-smooth);
+  backdrop-filter: var(--glass-blur);
+}
+
+.hero__button_secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--color-text-primary);
+}
+
+/* Glow effects */
+.hero__glow_1 {
+  position: absolute;
+  top: -10%;
+  left: -10%;
+  width: 40%;
+  height: 40%;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+  filter: blur(80px);
+  z-index: 1;
+}
+
+.hero__glow_2 {
+  position: absolute;
+  bottom: -10%;
+  right: -10%;
+  width: 40%;
+  height: 40%;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, transparent 70%);
+  filter: blur(80px);
+  z-index: 1;
+}
+
+@media (max-width: 768px) {
+  .hero__actions {
+    flex-direction: column;
+    width: 100%;
+  }
+}
