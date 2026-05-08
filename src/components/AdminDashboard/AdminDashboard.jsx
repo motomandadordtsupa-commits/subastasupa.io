@@ -133,6 +133,7 @@ const AdminDashboard = () => {
                   <th style={{padding: '15px', textAlign: 'left', color: '#495057'}}>Subasta</th>
                   <th style={{padding: '15px', textAlign: 'left', color: '#495057'}}>Vendedor</th>
                   <th style={{padding: '15px', textAlign: 'left', color: '#495057'}}>Total Pagado</th>
+                  <th style={{padding: '15px', textAlign: 'left', color: '#495057'}}>Tarifa MP</th>
                   <th style={{padding: '15px', textAlign: 'left', color: '#495057'}}>Tu Comisión ({commissionRate}%)</th>
                   <th style={{padding: '15px', textAlign: 'left', color: '#495057'}}>A Transferir</th>
                   <th style={{padding: '15px', textAlign: 'left', color: '#495057'}}>Estado Entrega</th>
@@ -141,8 +142,9 @@ const AdminDashboard = () => {
               </thead>
               <tbody>
                 {settlements.map((auction) => {
-                  const toPay = auction.current_price - (auction.current_price * commissionRate / 100);
+                  const mpFee = auction.mp_fee || 0;
                   const comission = auction.current_price * commissionRate / 100;
+                  const toPay = auction.current_price - mpFee - comission;
                   const isReady = auction.payment_status === 'delivered';
                   
                   return (
@@ -154,8 +156,9 @@ const AdminDashboard = () => {
                         <span style={{fontSize: '0.85rem', color: '#004085', fontWeight: 'bold'}}>🏦 {auction.seller?.payment_alias || 'Sin alias'}</span>
                       </td>
                       <td style={{padding: '15px'}}>${auction.current_price}</td>
-                      <td style={{padding: '15px', color: '#28a745', fontWeight: 'bold'}}>${comission}</td>
-                      <td style={{padding: '15px', fontWeight: 'bold', fontSize: '1.1rem'}}>${toPay}</td>
+                      <td style={{padding: '15px', color: '#dc3545'}}>-${mpFee.toFixed(2)}</td>
+                      <td style={{padding: '15px', color: '#28a745', fontWeight: 'bold'}}>${comission.toFixed(2)}</td>
+                      <td style={{padding: '15px', fontWeight: 'bold', fontSize: '1.1rem'}}>${toPay.toFixed(2)}</td>
                       <td style={{padding: '15px'}}>
                         {isReady ? (
                           <span style={{background: '#d4edda', color: '#155724', padding: '6px 12px', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 'bold'}}>🟢 LUZ VERDE (Entregado)</span>

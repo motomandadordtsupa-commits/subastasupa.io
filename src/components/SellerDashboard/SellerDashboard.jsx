@@ -93,7 +93,7 @@ const SellerDashboard = ({ user, onClose }) => {
                   </div>
                   <div className={styles.stat}>
                     <label>Neto a recibir</label>
-                    <p className={styles.net_highlight}>${auction.current_price - (auction.current_price * commissionRate / 100)}</p>
+                    <p className={styles.net_highlight}>${(auction.current_price - (auction.mp_fee || 0) - (auction.current_price * commissionRate / 100)).toFixed(2)}</p>
                   </div>
                 </div>
 

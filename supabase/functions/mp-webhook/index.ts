@@ -37,7 +37,12 @@ serve(async (req) => {
         const auctionId = paymentData.metadata?.auction_id || paymentData.external_reference
 
         if (auctionId) {
-          // 2. Conectar a Supabase usando el rol de administrador (Service Role Key)
+          // Extraer la comisión exacta que cobró Mercado Pago
+          const transactionAmount = paymentData.transaction_amount || 0;
+          const netReceived = paymentData.transaction_details?.net_received_amount || transactionAmount;
+          const mpFee = transactionAmount - netReceived;
+
+          // 2. Conectar a Supabase usando el rol de administrador
           const supabaseUrl = Deno.env.get('SUPABASE_URL') || Deno.env.get('SUPABASE_DB_URL')
           const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
           
@@ -47,10 +52,10 @@ serve(async (req) => {
 
           const supabase = createClient(supabaseUrl, supabaseKey)
 
-          // 3. Actualizar la subasta a "pagado"
+          // 3. Actualizar la subasta a "pagado" y guardar la comisión de MP
           const { error } = await supabase
             .from('auctions')
-            .update({ payment_status: 'paid' })
+            .update({ payment_status: 'paid', mp_fee: mpFee })
             .eq('id', auctionId)
 
           if (error) throw error
