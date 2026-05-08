@@ -16,12 +16,25 @@ const AuctionForm = ({ user, onClose, onSuccess }) => {
     location: '',
     lat: null,
     lng: null,
-    image: null
+    image: null,
+    payment_alias: ''
   });
+  const [hasSavedAlias, setHasSavedAlias] = useState(true);
 
   useEffect(() => {
     fetchSettings();
+    checkUserAlias();
   }, []);
+
+  const checkUserAlias = async () => {
+    const { data } = await supabase.from('profiles').select('payment_alias').eq('id', user.id).single();
+    if (data && data.payment_alias) {
+      setHasSavedAlias(true);
+      setFormData(prev => ({ ...prev, payment_alias: data.payment_alias }));
+    } else {
+      setHasSavedAlias(false);
+    }
+  };
 
   const fetchSettings = async () => {
     const { data } = await supabase.from('settings').select('*').eq('id', 'commission_rate').single();
@@ -84,6 +97,16 @@ const AuctionForm = ({ user, onClose, onSuccess }) => {
         imageUrl = publicUrl;
       }
 
+      // 2.5 Guardar el Alias en el perfil si es la primera vez
+      if (!hasSavedAlias && formData.payment_alias) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({ payment_alias: formData.payment_alias })
+          .eq('id', user.id);
+        
+        if (profileError) console.error("Error guardando alias:", profileError);
+      }
+
       // 3. Guardar en la base de datos (estado 'pending' por defecto)
       const { error: dbError } = await supabase
         .from('auctions')
@@ -136,6 +159,14 @@ const AuctionForm = ({ user, onClose, onSuccess }) => {
             <label>Descripción detallada</label>
             <textarea name="description" rows="3" required onChange={handleChange} placeholder="Condición, año, detalles..."></textarea>
           </div>
+
+          {!hasSavedAlias && (
+            <div className={styles.group} style={{background: '#e8f4fd', padding: '15px', borderRadius: '8px', border: '1px solid #b8daff'}}>
+              <label style={{color: '#004085', fontWeight: 'bold'}}>🏦 Tu CBU o Alias (Requisito Único)</label>
+              <p style={{fontSize: '0.85rem', margin: '0 0 10px 0', color: '#004085'}}>Necesitamos este dato para poder transferirte tus ganancias. Solo te lo pediremos esta vez.</p>
+              <input type="text" name="payment_alias" required onChange={handleChange} placeholder="Ej: micuenta.mp o 00000031..." style={{border: '1px solid #004085', padding: '10px', width: '100%', borderRadius: '4px'}} />
+            </div>
+          )}
 
           <div className={styles.row}>
             <div className={styles.group}>

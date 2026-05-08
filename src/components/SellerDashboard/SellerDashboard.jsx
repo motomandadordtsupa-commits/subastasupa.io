@@ -23,7 +23,8 @@ const SellerDashboard = ({ user, onClose }) => {
         .from('auctions')
         .select(`
           *,
-          leader:last_bidder_id (username)
+          leader:last_bidder_id (username),
+          winner:current_winner_id (username, phone)
         `)
         .eq('seller_id', user.id)
         .order('created_at', { ascending: false });
@@ -95,6 +96,30 @@ const SellerDashboard = ({ user, onClose }) => {
                     <p className={styles.net_highlight}>${auction.current_price - (auction.current_price * commissionRate / 100)}</p>
                   </div>
                 </div>
+
+                {auction.payment_status === 'paid' && (
+                  <div style={{marginTop: '15px', padding: '15px', background: '#fff3cd', borderRadius: '8px', border: '1px solid #ffeeba'}}>
+                    <p style={{color: '#856404', margin: '0 0 10px 0', fontSize: '0.9rem'}}>
+                      ⚠️ <b>¡Importante!</b> Al momento de entregar el producto, pídele al comprador que presione el botón <i>"Confirmar Recepción"</i> en su aplicación. Sin esa confirmación, tu dinero seguirá retenido.
+                    </p>
+                    <a 
+                      href={`https://wa.me/${auction.winner?.phone}?text=Hola ${auction.winner?.username}, soy el vendedor de la subasta de ${auction.title}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{display: 'block', background: '#25D366', color: 'white', padding: '10px', borderRadius: '8px', textAlign: 'center', textDecoration: 'none', fontWeight: 'bold'}}
+                    >
+                      📱 Contactar al Comprador por WhatsApp
+                    </a>
+                  </div>
+                )}
+
+                {auction.payment_status === 'delivered' && (
+                  <div style={{marginTop: '15px', padding: '15px', background: '#d4edda', borderRadius: '8px', border: '1px solid #c3e6cb'}}>
+                    <p style={{color: '#155724', margin: '0', textAlign: 'center'}}>
+                      ✅ <b>Producto Entregado.</b> Tu dinero está en proceso de liquidación.
+                    </p>
+                  </div>
+                )}
               </div>
             );
           })}

@@ -19,6 +19,21 @@ function App() {
   const [showBuyerPanel, setShowBuyerPanel] = useState(false);
 
   useEffect(() => {
+    // Manejo de redirecciones de Mercado Pago
+    const path = window.location.pathname;
+    if (path === '/payment-success') {
+      alert('¡Pago exitoso! Hemos registrado tu compra.');
+      window.history.replaceState({}, document.title, '/');
+      setShowBuyerPanel(true);
+    } else if (path === '/payment-failure') {
+      alert('Hubo un error al procesar el pago. Por favor, intenta de nuevo.');
+      window.history.replaceState({}, document.title, '/');
+    } else if (path === '/payment-pending') {
+      alert('Tu pago se encuentra pendiente de acreditación.');
+      window.history.replaceState({}, document.title, '/');
+      setShowBuyerPanel(true);
+    }
+
     // Escuchar cambios en la sesión (login/logout)
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);

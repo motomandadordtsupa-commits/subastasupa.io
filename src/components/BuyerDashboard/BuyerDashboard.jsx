@@ -31,7 +31,8 @@ const BuyerDashboard = ({ user, onClose }) => {
             payment_status,
             location,
             image_url,
-            end_at
+            end_at,
+            seller:seller_id (phone, username)
           )
           )
         `)
@@ -143,6 +144,35 @@ const BuyerDashboard = ({ user, onClose }) => {
                       >
                         ❌ Cancelar Compra
                       </button>
+                    </div>
+                  )}
+
+                  {auction.status === 'finished' && isWinner && auction.payment_status === 'paid' && (
+                    <div className={styles.winner_actions}>
+                      <p className={styles.success_text} style={{color: 'green', fontWeight: 'bold'}}>✅ Pago confirmado. Coordina la entrega.</p>
+                      
+                      <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '10px'}}>
+                        <a 
+                          href={`https://wa.me/${auction.seller?.phone}?text=Hola ${auction.seller?.username}, soy ${userProfile?.username || 'el comprador'}, ya pagué la subasta de ${auction.title}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          style={{background: '#25D366', color: 'white', padding: '10px', borderRadius: '8px', textAlign: 'center', textDecoration: 'none', fontWeight: 'bold'}}
+                        >
+                          📱 Contactar al Vendedor por WhatsApp
+                        </a>
+
+                        <button 
+                          style={{background: '#007bff', color: 'white', padding: '10px', borderRadius: '8px', border: 'none', fontWeight: 'bold', cursor: 'pointer'}}
+                          onClick={async () => {
+                            if(confirm('¿Confirmas que ya tienes el producto en tus manos? Esto le liberará el dinero al vendedor. ¡No presiones esto si no tienes el producto!')) {
+                              await supabase.from('auctions').update({ payment_status: 'delivered' }).eq('id', auction.id);
+                              fetchMyBids();
+                            }
+                          }}
+                        >
+                          🛍️ Confirmar Recepción del Producto
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
